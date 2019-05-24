@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -14,6 +12,6 @@
     "yargs": "^13.2.2"
   },
   "bin": {
-    "aws-metrics-sender": "./agent.js"
+    "aws-metrics-sender": "./index.js"
   }
 }
