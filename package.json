@@ -12,5 +12,8 @@
     "aws-sdk": "^2.446.0",
     "tail": "^2.0.2",
     "yargs": "^13.2.2"
+  },
+  "bin": {
+    "aws-metrics-sender": "./agent.js"
   }
 }
