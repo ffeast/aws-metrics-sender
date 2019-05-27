@@ -1,5 +1,5 @@
 const Service = require('node-windows').Service;
-
+const yargs = require('yargs');
 const env = [
     {
         name: 'AGENT_AWS_REGION',
@@ -23,15 +23,31 @@ const env = [
     }
 ];
 
-const svc = new Service({
-  name: 'aws-metrics-sender',
-  description: 'AWS custom metrics sender',
-  script: 'aws-metrics-sender',
-  env: env
+const scriptPath = require.resolve('aws-metrics-sender');
+const service = new Service({
+    name: 'aws-metrics-sender',
+    description: 'AWS custom metrics sender',
+    script: scriptPath,
+    env: env
+});
+service.on('install',function() {
+    console.log('Installation complete');
+    service.start();
+    console.log('Service started');
+});
+service.on('uninstall', function() {
+    console.log('Uninstall complete');
 });
 
-svc.on('install',function() {
-  svc.start();
-});
-
-svc.install();
+const argv = yargs
+    .command('install', 'Install the service', {}, () => {
+        service.install();
+    })
+    .command('uninstall', 'Uninstall the service', {}, () => {
+        service.uninstall();
+    })
+    .demandCommand()
+    .locale('en')
+    .help()
+    .alias('help', 'h')
+    .argv;
