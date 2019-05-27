@@ -24,12 +24,17 @@ I'm not a big fan of Windows OS and it's quite likely that the following steps c
 8. configure variables in `agent-service.js`
 9. `node agent-service.js install`
 
-If all went smoothly you'd see a new service **aws-metrics-sender** in the windows services list and  `daemon` folder in `node_module\aws-metrics-sender`:
+If all went smoothly you'd see a new service **aws-metrics-sender** in the windows services
 
-TODO: picture1 and picture2 in windowsservice
+![](images/services_list.png)
+
+
+Here it is:
+![](images/service_box.png)
+
 
 It's also recommended to configure script restarts:
-TODO: another picture
+![](images/recovery_screen.png)
 
 If something goes wrong you can check out log files in the `node_modules\aws-metrics-sender\daemon` folder
 
