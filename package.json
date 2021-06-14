@@ -14,7 +14,7 @@
   "dependencies": {
     "aws-sdk": "^2.446.0",
     "tail": "^2.0.2",
-    "yargs": "^13.2.2"
+    "yargs": "^13.3.2"
   },
   "bin": {
     "aws-metrics-sender": "./index.js"
