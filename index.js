@@ -4,6 +4,7 @@ const os = require('os');
 const fs = require('fs');
 const readline = require('readline');
 const stream = require('stream');
+const path = require('path');
 
 const AWS = require('aws-sdk');
 const yargs = require('yargs');
@@ -57,7 +58,8 @@ const argv = yargs
 let cloudwatch = new AWS.CloudWatch({region: argv['aws-region']});
 
 for (let metric of argv.metrics) {
-    let tracker = new tail.Tail(metric, {follow: true});
+    const tracker = new tail.Tail(metric, {follow: true});
+    const source = path.basename(metric);
     tracker.on('line', (line) => {
         let [timestamp, key, val] = line.split(argv.separator, 3);
         let metricsData = {
@@ -69,6 +71,9 @@ for (let metric of argv.metrics) {
                     Dimensions: [{
                         Name: 'Server',
                         Value: argv.server
+                    }, {
+                        Name: 'Source',
+                        Value: source
                     }],
                     Value: Number(val)
                 }

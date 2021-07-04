@@ -1,6 +1,6 @@
 # aws-metrics-sender
 
-This is a script that listens on the metrics file and sends added metrics to AWS Cloudwatch.
+This is a script that listens on the metrics files and sends added metrics to AWS Cloudwatch.
 
 And yes, it's Windows-compatible
 

@@ -7,7 +7,7 @@ const env = [
     },
     {
         name: 'AGENT_METRICS',
-        value: 'C:\\Somewhere\\metrics.txt'
+        value: 'C:\\Somewhere\\metrics1.txt C:\\Somewhere\\metrics2.txt'
     },
     {
         name: 'AGENT_NAMESPACE',
