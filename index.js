@@ -14,10 +14,10 @@ const MILLISECONDS_MULTIPLIER = 1000;
 
 const argv = yargs
     .option('metrics', {
-        description: 'Path to the metrics file',
+        description: 'Path to the metrics files',
         required: true,
         default: process.env.AGENT_METRICS,
-        type: 'string'
+        type: 'array'
     })
     .option('aws-region', {
         description: 'AWS region',
@@ -54,43 +54,45 @@ const argv = yargs
     .alias('help', 'h')
     .argv;
 
-let tracker = new tail.Tail(argv.metrics, {follow: true});
 let cloudwatch = new AWS.CloudWatch({region: argv['aws-region']});
 
-tracker.on('line', (line) => {
-    let [timestamp, key, val] = line.split(argv.separator, 3);
-    let metricsData = {
-        Namespace: argv.namespace,
-        MetricData: [
-            {
-                MetricName: key,
-                Timestamp: new Date(timestamp * MILLISECONDS_MULTIPLIER),
-                Dimensions: [{
-                    Name: 'Server',
-                    Value: argv.server
-                }],
-                Value: Number(val)
-            }
-        ]
-    };
-    if (argv.verbose) {
-        console.info(
-            'caught event:',
-            JSON.stringify(metricsData, null, JSON_SPACES));
-    }
-    cloudwatch.putMetricData(metricsData, (err, data) => {
-        if (err) {
-            console.error('%s: %s', err, line);
-        } else if (argv.verbose) {
-            console.info('ok sent');
+for (let metric of argv.metrics) {
+    let tracker = new tail.Tail(metric, {follow: true});
+    tracker.on('line', (line) => {
+        let [timestamp, key, val] = line.split(argv.separator, 3);
+        let metricsData = {
+            Namespace: argv.namespace,
+            MetricData: [
+                {
+                    MetricName: key,
+                    Timestamp: new Date(timestamp * MILLISECONDS_MULTIPLIER),
+                    Dimensions: [{
+                        Name: 'Server',
+                        Value: argv.server
+                    }],
+                    Value: Number(val)
+                }
+            ]
+        };
+        if (argv.verbose) {
+            console.info(
+                'caught event:',
+                JSON.stringify(metricsData, null, JSON_SPACES));
         }
+        cloudwatch.putMetricData(metricsData, (err, data) => {
+            if (err) {
+                console.error('%s: %s', err, line);
+            } else if (argv.verbose) {
+                console.info('ok sent');
+            }
+        });
     });
-});
 
-tracker.on('error', (error) => {
-    console.error('unable to read from %s: %s', argv.metrics, error);
-    tracker.unwatch();
-});
+    tracker.on('error', (error) => {
+        console.error('unable to read from %s: %s', argv.metrics, error);
+        tracker.unwatch();
+    });
+}
 
 if (argv.verbose) {
     console.info('listening on %s', argv.metrics);
