@@ -17,7 +17,7 @@ const argv = yargs
     .option('metrics', {
         description: 'Path to the metrics files',
         required: true,
-        default: process.env.AGENT_METRICS,
+        default: process.env.AGENT_METRICS.split(' '),
         type: 'array'
     })
     .option('aws-region', {
